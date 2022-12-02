@@ -1,0 +1,46 @@
+{
+  "name": "@layerzerolabs/mainnet-testnet-bridge",
+  "version": "0.0.1",
+  "license": "MIT",
+  "files": [
+    "artifacts/",
+    "contracts/"
+  ],
+  "description": "Mainnet to Testnet bridge",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "prettier": "prettier --write test/**/*.js && prettier --write test/*/*/*.js && prettier --write deploy/*.js && prettier --write tasks/*.js && prettier --write contracts/**/*.sol && prettier --write contracts/**/**/*.sol && prettier --write contracts/**/**/**/*.sol",
+    "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol' && solhint 'contracts/**/**/*.sol' && solhint 'contracts/**/**/**/*.sol'"
+  },
+  "dependencies": {
+    "@layerzerolabs/solidity-examples": "0.0.4",
+    "@uniswap/v2-periphery": "1.1.0-beta.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-waffle": "2.0.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.0",
+    "@ethersproject/hardware-wallets": "^5.0.14",
+    "@layerzerolabs/prettier-plugin-solidity": "^1.0.0-beta.19",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
+    "@nomiclabs/hardhat-ethers": "^2.0.3",
+    "ethereum-waffle": "^3.2.0",
+    "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "ethers": "^5.5.2",
+    "hardhat": "^2.12.2",
+    "hardhat-contract-sizer": "^2.1.1",
+    "hardhat-deploy": "^0.10.5",
+    "hardhat-deploy-ethers": "^0.3.0-beta.13",
+    "hardhat-gas-reporter": "^1.0.6",
+    "prettier": "^2.4.1",
+    "solhint": "^3.3.6",
+    "solidity-coverage": "^0.8.2",
+    "typescript": "^3.7.0"
+  }
+}
