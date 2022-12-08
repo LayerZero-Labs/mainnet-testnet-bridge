@@ -514,10 +514,10 @@
     solidity-comments-extractor "^0.0.7"
     string-width "^4.2.3"
 
-"@layerzerolabs/solidity-examples@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@layerzerolabs/solidity-examples/-/solidity-examples-0.0.4.tgz#1f2e7c183d1efda11e58f7686c34654de24167e2"
-  integrity sha512-OTW0tXKmiksOLlZdDt5E3S8FRZ+xQsuXqBwkKxgSLsoQsrNDiwDASj3dZug1J4XDzwr8i8n47Hq/b7KLJb3Aaw==
+"@layerzerolabs/solidity-examples@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@layerzerolabs/solidity-examples/-/solidity-examples-0.0.5.tgz#e4faa287dcb720abaa337cf3e160e3cb89b4686a"
+  integrity sha512-kVqyrT+NpCiqOQrek0EBW2O7qeuTCZsMPG0V0SIIZtLuTan1bW20SRkzs1NFfvGq23QWOIZ85hsOMqPjrw7bRA==
   dependencies:
     "@openzeppelin/contracts" "^4.4.1"
     "@openzeppelin/contracts-upgradeable" "^4.6.0"

@@ -16,8 +16,9 @@
     "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol' && solhint 'contracts/**/**/*.sol' && solhint 'contracts/**/**/**/*.sol'"
   },
   "dependencies": {
-    "@layerzerolabs/solidity-examples": "0.0.4",
-    "@uniswap/v2-periphery": "1.1.0-beta.0"
+    "@layerzerolabs/solidity-examples": "0.0.5",
+    "@uniswap/v2-periphery": "1.1.0-beta.0",
+    "@openzeppelin/contracts": "^4.4.1"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "2.0.3",
