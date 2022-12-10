@@ -14,13 +14,26 @@ contract NativeOFTV2 is OFTV2, ReentrancyGuard {
     function _send(address _from, uint16 _dstChainId, bytes32 _toAddress, uint _amount, address payable _refundAddress, address _zroPaymentAddress, bytes memory _adapterParams) internal virtual override returns (uint amount) {
         _checkAdapterParams(_dstChainId, PT_SEND, _adapterParams, NO_EXTRA_GAS);
 
-		(amount,) = _removeDust(_amount);
 		uint messageFee = msg.sender == _from ? _debitMsgSender(_amount) : _debitMsgFrom(_from, _amount);
+        (amount,) = _removeDust(_amount);
 
         bytes memory lzPayload = _encodeSendPayload(_toAddress, _amount);
         _lzSend(_dstChainId, lzPayload, _refundAddress, _zroPaymentAddress, _adapterParams, messageFee);
 
 		emit SendToChain(_dstChainId, _from, _toAddress, amount);
+    }
+
+    function _sendAndCall(address _from, uint16 _dstChainId, bytes32 _toAddress, uint _amount, bytes memory _payload, uint64 _dstGasForCall, address payable _refundAddress, address _zroPaymentAddress, bytes memory _adapterParams) internal virtual override returns (uint amount) {
+        _checkAdapterParams(_dstChainId, PT_SEND_AND_CALL, _adapterParams, NO_EXTRA_GAS);
+
+		uint messageFee = msg.sender == _from ? _debitMsgSender(_amount) : _debitMsgFrom(_from, _amount);
+        (amount,) = _removeDust(_amount);
+
+        // encode the msg.sender into the payload instead of _from
+        bytes memory lzPayload = _encodeSendAndCallPayload(msg.sender, _toAddress, amount, _payload, _dstGasForCall);
+        _lzSend(_dstChainId, lzPayload, _refundAddress, _zroPaymentAddress, _adapterParams, messageFee);
+
+        emit SendToChain(_dstChainId, _from, _toAddress, amount);
     }
 
     function deposit() public payable {

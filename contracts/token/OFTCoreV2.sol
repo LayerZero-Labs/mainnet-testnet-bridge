@@ -69,18 +69,21 @@ abstract contract OFTCoreV2 is NonblockingLzApp {
     ************************************************************************/
     function _estimateSendFee(uint16 _dstChainId, bytes32 _toAddress, uint _amount, bool _useZro, bytes memory _adapterParams) internal view virtual returns (uint nativeFee, uint zroFee) {
         // mock the payload for sendFrom()
-        bytes memory payload = _encodeSendPayload(_toAddress, _ld2sd(_amount));
+        bytes memory payload = _encodeSendPayload(_toAddress, _amount);
         return lzEndpoint.estimateFees(_dstChainId, address(this), payload, _useZro, _adapterParams);
     }
 
     function _estimateSendAndCallFee(uint16 _dstChainId, bytes32 _toAddress, uint _amount, bytes memory _payload, uint64 _dstGasForCall, bool _useZro, bytes memory _adapterParams) internal view virtual returns (uint nativeFee, uint zroFee) {
         // mock the payload for sendAndCall()
-        bytes memory payload = _encodeSendAndCallPayload(msg.sender, _toAddress, _ld2sd(_amount), _payload, _dstGasForCall);
+        bytes memory payload = _encodeSendAndCallPayload(msg.sender, _toAddress, _amount, _payload, _dstGasForCall);
         return lzEndpoint.estimateFees(_dstChainId, address(this), payload, _useZro, _adapterParams);
     }
 
     function _nonblockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
-        uint8 packetType = _payload.toUint8(0);
+        uint16 packetType;
+        assembly {
+            packetType := mload(add(_payload, 32))
+        }
 
         if (packetType == PT_SEND) {
             _sendAck(_srcChainId, _srcAddress, _nonce, _payload);
@@ -105,12 +108,11 @@ abstract contract OFTCoreV2 is NonblockingLzApp {
     }
 
     function _sendAck(uint16 _srcChainId, bytes memory, uint64, bytes memory _payload) internal virtual {
-        (address to, uint amountSD) = _decodeSendPayload(_payload);
+        (address to, uint amount) = _decodeSendPayload(_payload);
         if (to == address(0)) {
             to = address(0xdead);
         }
 
-        uint amount = _sd2ld(amountSD);
         amount = _creditTo(_srcChainId, to, amount);
 
         emit ReceiveFromChain(_srcChainId, to, amount);
@@ -130,11 +132,10 @@ abstract contract OFTCoreV2 is NonblockingLzApp {
         emit SendToChain(_dstChainId, _from, _toAddress, amount);
     }
 
-    function _sendAndCallAck(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual {
-        (bytes32 from, address to, uint64 amountSD, bytes memory payloadForCall, uint64 gasForCall) = _decodeSendAndCallPayload(_payload);
+    function _sendAndCallAck(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual {     
+        (bytes32 from, address to, uint amount, bytes memory payloadForCall, uint64 gasForCall) = _decodeSendAndCallPayload(_payload);
 
         bool credited = creditedPackets[_srcChainId][_srcAddress][_nonce];
-        uint amount = _sd2ld(amountSD);
 
         // credit to this contract first, and then transfer to receiver only if callOnOFTReceived() succeeds
         if (!credited) {
@@ -182,50 +183,46 @@ abstract contract OFTCoreV2 is NonblockingLzApp {
         }
     }
 
-    function _ld2sd(uint _amount) internal virtual view returns (uint) {
-        uint amountSD = _amount / _ld2sdRate();
-        return amountSD;
-    }
-
-    function _sd2ld(uint _amountSD) internal virtual view returns (uint) {
-        return _amountSD * _ld2sdRate();
-    }
-
     function _removeDust(uint _amount) internal virtual view returns (uint amountAfter, uint dust) {
         dust = _amount % _ld2sdRate();
         amountAfter = _amount - dust;
     }
 
     function _encodeSendPayload(bytes32 _toAddress, uint _amount) internal virtual view returns (bytes memory) {
-        return abi.encodePacked(PT_SEND, _toAddress, _ld2sd(_amount));
+        uint amountSD = _amount / _ld2sdRate();
+        return abi.encode(PT_SEND, _toAddress, amountSD);
     }
 
-    function _decodeSendPayload(bytes memory _payload) internal virtual view returns (address to, uint amountSD) {
-        require(_payload.toUint8(0) == PT_SEND, "OFTCore: invalid payload");
+    function _decodeSendPayload(bytes memory _payload) internal virtual view returns (address to, uint amount) {
+        (, bytes32 toAddressBytes, uint amountSD) = abi.decode(_payload, (uint8, bytes32, uint));
 
-        to = _payload.toAddress(13); // drop the first 12 bytes of bytes32
-        amountSD = _payload.toUint256(33);
+        to = _bytes32ToAddress(toAddressBytes);
+        amount = amountSD * _ld2sdRate();
     }
 
     function _encodeSendAndCallPayload(address _from, bytes32 _toAddress, uint _amount, bytes memory _payload, uint64 _dstGasForCall) internal virtual view returns (bytes memory) {
-        return abi.encodePacked(
+        uint amountSD = _amount / _ld2sdRate();
+        return abi.encode(
             PT_SEND_AND_CALL,
             _toAddress,
-            _ld2sd(_amount),
+            amountSD,
             _addressToBytes32(_from),
             _dstGasForCall,
             _payload
         );
     }
 
-    function _decodeSendAndCallPayload(bytes memory _payload) internal virtual view returns (bytes32 from, address to, uint64 amountSD, bytes memory payload, uint64 dstGasForCall) {
-        require(_payload.toUint8(0) == PT_SEND_AND_CALL, "OFTCore: invalid payload");
+    function _decodeSendAndCallPayload(bytes memory _payload) internal virtual view returns (bytes32 from, address to, uint amount, bytes memory payload, uint64 dstGasForCall) {
+        bytes32 toAddressBytes;
+        uint amountSD;
+        (, toAddressBytes, amountSD, from, dstGasForCall, payload) = abi.decode(_payload, (uint8, bytes32, uint, bytes32, uint64, bytes));
 
-        to = _payload.toAddress(13); // drop the first 12 bytes of bytes32
-        amountSD = _payload.toUint64(33);
-        from = _payload.toBytes32(41);
-        dstGasForCall = _payload.toUint64(73);
-        payload = _payload.slice(81, _payload.length - 81);
+        to = _bytes32ToAddress(toAddressBytes);
+        amount = amountSD * _ld2sdRate();
+    }
+
+    function _bytes32ToAddress(bytes32 _bytes32Address) internal pure virtual returns (address) {
+        return address(uint160(uint(_bytes32Address)));
     }
 
     function _addressToBytes32(address _address) internal pure virtual returns (bytes32) {
