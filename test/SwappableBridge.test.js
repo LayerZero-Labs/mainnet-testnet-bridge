@@ -6,7 +6,6 @@ const { createUniswap } = require("./helpers");
 describe.only("SwappableBridge", function () {
 	const mainnetId = 101
 	const goerliEthId = 10121
-	const sharedDecimals = 18;
 
 	let owner, ownerAddressBytes32
 	let ethUniswap, ethNativeOFT, ethOFT, weth, ethBridge, ethPool
@@ -28,17 +27,17 @@ describe.only("SwappableBridge", function () {
 		const mainnetEndpoint = await endpointFactory.deploy(mainnetId);
 		const goerliEndpoint = await endpointFactory.deploy(goerliEthId);
 		
-		const OFTFactory = await ethers.getContractFactory("OFTV2");
-		ethOFT = await OFTFactory.deploy("ETH OFT", "ETH", sharedDecimals, goerliEndpoint.address);
-		goerliEthOFT = await OFTFactory.deploy("Goerli ETH OFT", "ETH", sharedDecimals, mainnetEndpoint.address);
+		const OFTFactory = await ethers.getContractFactory("OFT");
+		ethOFT = await OFTFactory.deploy("ETH OFT", "ETH", goerliEndpoint.address);
+		goerliEthOFT = await OFTFactory.deploy("Goerli ETH OFT", "ETH", mainnetEndpoint.address);
 
-		const nativeOFTFactory = await ethers.getContractFactory("NativeOFTV2");
-		ethNativeOFT = await nativeOFTFactory.deploy("ETH Native OFT", "ETH", sharedDecimals, mainnetEndpoint.address);
-		goerliEthNativeOFT = await nativeOFTFactory.deploy("Goerli ETH Native OFT", "ETH", sharedDecimals, goerliEndpoint.address);
+		const nativeOFTFactory = await ethers.getContractFactory("NativeOFT");
+		ethNativeOFT = await nativeOFTFactory.deploy("ETH Native OFT", "ETH", mainnetEndpoint.address);
+		goerliEthNativeOFT = await nativeOFTFactory.deploy("Goerli ETH Native OFT", "ETH", goerliEndpoint.address);
 
 		const swappableBridgeFactory = await ethers.getContractFactory("SwappableBridge");
-		ethBridge = await swappableBridgeFactory.deploy(goerliEthOFT.address, ethUniswap.router.address);
-		goerliEthBridge = await swappableBridgeFactory.deploy(ethOFT.address, goerliEthUniswap.router.address);
+		ethBridge = await swappableBridgeFactory.deploy(goerliEthOFT.address, ethNativeOFT.address, ethUniswap.router.address);
+		goerliEthBridge = await swappableBridgeFactory.deploy(ethOFT.address, goerliEthNativeOFT.address, goerliEthUniswap.router.address);
 
 		// internal bookkeeping for endpoints (not part of a real deploy, just for this test)
 		await mainnetEndpoint.setDestLzEndpoint(ethOFT.address, goerliEndpoint.address);		
@@ -57,16 +56,8 @@ describe.only("SwappableBridge", function () {
 	describe("bridges native Goerli ETH to mainnet", function () {
 		const goerliAmount = utils.parseEther("10");		
 		beforeEach(async () => {
-			await goerliEthNativeOFT.deposit({ value: goerliAmount });
-			const nativeFee = (await goerliEthNativeOFT.estimateSendFee(mainnetId, ownerAddressBytes32, goerliAmount, false, "0x")).nativeFee;
-			await goerliEthNativeOFT.sendFrom(
-				owner.address,
-				mainnetId, // destination chainId
-				ownerAddressBytes32, // destination address to send tokens to
-				goerliAmount, // quantity of tokens to send (in units of wei)
-				[owner.address, ethers.constants.AddressZero, "0x"], // adapterParameters empty bytes specifies default settings
-				{ value: nativeFee.add(utils.parseEther("0.1")) } // pass a msg.value to pay the LayerZero message fee
-			)
+			const nativeFee = (await goerliEthNativeOFT.estimateSendFee(mainnetId, owner.address, goerliAmount, false, "0x")).nativeFee
+			await goerliEthBridge.bridge(goerliAmount, mainnetId, owner.address, constants.AddressZero, "0x", { value: goerliAmount.add(nativeFee) })
 		})
 
 		it("GoerliOFT is on mainnet", async () => {
@@ -93,7 +84,7 @@ describe.only("SwappableBridge", function () {
 				beforeEach(async () => {
 					const amounts = await ethUniswap.router.getAmountsOut(amountIn, [weth.address, goerliEthOFT.address]);
 					amountOutMin = amounts[1];
-					await ethBridge.swapAndBridge(amountIn, amountOutMin, goerliEthId, [owner.address, constants.AddressZero, "0x"], { value: utils.parseEther("0.12") });
+					await ethBridge.swapAndBridge(amountIn, amountOutMin, goerliEthId, owner.address, constants.AddressZero, "0x", { value: utils.parseEther("0.12") });
 				})
 
 				it("pool balances changed", async () => {
@@ -105,18 +96,10 @@ describe.only("SwappableBridge", function () {
 	})
 
 	describe("bridges native ETH to Goerli ", function () {
-		const ethAmount = utils.parseEther("11");
+		const ethAmount = utils.parseEther("10");
 		beforeEach(async () => {
-			await ethNativeOFT.deposit({ value: ethAmount });
 			const nativeFee = (await ethNativeOFT.estimateSendFee(goerliEthId, ownerAddressBytes32, ethAmount, false, "0x")).nativeFee;
-			await ethNativeOFT.sendFrom(
-				owner.address,
-				goerliEthId, // destination chainId
-				ownerAddressBytes32, // destination address to send tokens to
-				ethAmount, // quantity of tokens to send (in units of wei)
-				[owner.address, ethers.constants.AddressZero, "0x"], // adapterParameters empty bytes specifies default settings
-				{ value: nativeFee.add(utils.parseEther("0.1")) } // pass a msg.value to pay the LayerZero message fee
-			)
+			await ethBridge.bridge(ethAmount, goerliEthId, owner.address, constants.AddressZero, "0x", { value: ethAmount.add(nativeFee) })
 		})
 
 		it("EthOFT is on Goerli", async () => {
@@ -143,7 +126,7 @@ describe.only("SwappableBridge", function () {
 				beforeEach(async () => {
 					const amounts = await goerliEthUniswap.router.getAmountsOut(amountIn, [goerliWeth.address, ethOFT.address]);
 					amountOutMin = amounts[1];
-					await goerliEthBridge.swapAndBridge(amountIn, amountOutMin, mainnetId, [owner.address, constants.AddressZero, "0x"], { value: utils.parseEther("0.12") });
+					await goerliEthBridge.swapAndBridge(amountIn, amountOutMin, mainnetId, owner.address, constants.AddressZero, "0x", { value: utils.parseEther("0.12") });
 				})
 
 				it("pool balances changed", async () => {

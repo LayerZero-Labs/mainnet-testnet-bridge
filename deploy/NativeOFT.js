@@ -8,12 +8,12 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
 	const lzEndpointAddress = LZ_ENDPOINTS[hre.network.name]
 	console.log(`[${hre.network.name}] Endpoint Address: ${lzEndpointAddress}`)
 
-	await deploy("NativeOFTV2", {
+	await deploy("NativeOFT", {
 		from: deployer,
-		args: ["Native OFTV2", "NOFTV2", 18, lzEndpointAddress],
+		args: ["Native OFT", "NOFT", lzEndpointAddress],
 		log: true,
 		waitConfirmations: 1,
 	})
 }
 
-module.exports.tags = ["NativeOFTV2"]
+module.exports.tags = ["NativeOFT"]

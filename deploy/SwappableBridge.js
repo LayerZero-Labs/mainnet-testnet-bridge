@@ -8,17 +8,15 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
 	const routerAddress = ROUTERS[hre.network.name]
 	console.log(`[${hre.network.name}] Uniswap Router Address: ${routerAddress}`)
 
-	const oft = await ethers.getContract("OFTV2");
-	const oftAddress = oft.address;
-	console.log(`[${hre.network.name}] OFT Address: ${oftAddress}`)
+	const oft = await ethers.getContract("OFT");
+	console.log(`[${hre.network.name}] OFT Address: ${oft.address}`)
 
-	const nativeOft = await ethers.getContract("NativeOFTV2");
-	const nativeOftAddress = nativeOft.address;
-	console.log(`[${hre.network.name}] Native OFT Address: ${nativeOftAddress}`)
+	const nativeOft = await ethers.getContract("NativeOFT");
+	console.log(`[${hre.network.name}] OFT Address: ${nativeOft.address}`)
 
 	await deploy("SwappableBridge", {
 		from: deployer,
-		args: [oftAddress, nativeOftAddress, routerAddress],
+		args: [oft.address, nativeOft.address, routerAddress],
 		log: true,
 		waitConfirmations: 1,
 	})
