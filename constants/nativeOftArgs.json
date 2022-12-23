@@ -1,0 +1,15 @@
+{
+	"goerli": {
+		"name": "Native OFT",
+		"symbol": "NOFT",
+		"minAmount": "0.001",
+		"useMinAmount": true,
+		"contractName": "MinSendAmountNativeOFT"
+	},
+	"bsc-testnet": {
+		"name": "Native OFT",
+		"symbol": "NOFT",
+		"useMinAmount": false,
+		"contractName": "NativeOFT"
+	}
+}

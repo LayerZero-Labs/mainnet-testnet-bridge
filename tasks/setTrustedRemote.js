@@ -1,24 +1,29 @@
 const CHAIN_IDS = require("../constants/chainIds.json")
 const { getDeploymentAddresses } = require("../utils/readStatic")
+const OFT_ARGS = require("../constants/oftArgs.json")
+const NATIVE_OFT_ARGS = require("../constants/nativeOftArgs.json")
 
 module.exports = async function (taskArgs, hre) {
-	const remoteChainId = CHAIN_IDS[taskArgs.targetNetwork]
+    const localChain = hre.network.name;
+    const remoteChain = taskArgs.targetNetwork;
 
-	const remoteOft = getDeploymentAddresses(taskArgs.targetNetwork)["OFT"]
-	const remoteNativeOft = getDeploymentAddresses(taskArgs.targetNetwork)["NativeOFT"]
+    const remoteChainId = CHAIN_IDS[remoteChain]
 
-	const oft = await ethers.getContract("OFT");
-	console.log(`[${hre.network.name}] OFT Address: ${oft.address}`)
+    const remoteOft = getDeploymentAddresses(remoteChain)[OFT_ARGS[remoteChain].contractName]
+    const remoteNativeOft = getDeploymentAddresses(remoteChain)[NATIVE_OFT_ARGS[remoteChain].contractName]
 
-	const nativeOft = await ethers.getContract("NativeOFT");
-	console.log(`[${hre.network.name}] Native OFT Address: ${nativeOft.address}`)
+    const oft = await ethers.getContract(OFT_ARGS[localChain].contractName)
+    console.log(`[${localChain}] OFT Address: ${oft.address}`)
 
-	console.log(`[${taskArgs.targetNetwork}] OFT Address: ${remoteOft}`)
-	console.log(`[${taskArgs.targetNetwork}] Native OFT Address: ${remoteNativeOft}`)
+    const nativeOft = await ethers.getContract(NATIVE_OFT_ARGS[localChain].contractName)
+    console.log(`[${localChain}] Native OFT Address: ${nativeOft.address}`)
 
-	let tx = await (await nativeOft.setTrustedRemoteAddress(remoteChainId, remoteOft)).wait();
-	console.log(`native OFT setTrustedRemoteAddress tx: ${tx.transactionHash}`);
+    console.log(`[${remoteChain}] OFT Address: ${remoteOft}`)
+    console.log(`[${remoteChain}] Native OFT Address: ${remoteNativeOft}`)
 
-	tx = await (await oft.setTrustedRemoteAddress(remoteChainId, remoteNativeOft)).wait();
-	console.log(`OFT setTrustedRemoteAddress tx: ${tx.transactionHash}`);
+    let tx = await (await nativeOft.setTrustedRemoteAddress(remoteChainId, remoteOft)).wait()
+    console.log(`native OFT setTrustedRemoteAddress tx: ${tx.transactionHash}`)
+
+    tx = await (await oft.setTrustedRemoteAddress(remoteChainId, remoteNativeOft)).wait()
+    console.log(`OFT setTrustedRemoteAddress tx: ${tx.transactionHash}`)
 }

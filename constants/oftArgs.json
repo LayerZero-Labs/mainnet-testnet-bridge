@@ -1,0 +1,15 @@
+{
+	"goerli": {
+		"name": "OFT",
+		"symbol": "OFT",
+		"minAmount": "0.001",
+		"useMinAmount": true,
+		"contractName": "MinSendAmountOFT"
+	},
+	"bsc-testnet": {
+		"name": "OFT",
+		"symbol": "OFT",
+		"useMinAmount": false,
+		"contractName": "OFT"
+	}
+}
