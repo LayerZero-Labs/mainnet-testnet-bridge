@@ -6,9 +6,9 @@ import "@layerzerolabs/solidity-examples/contracts/token/oft/IOFTCore.sol";
 import "./INativeOFT.sol";
 
 contract SwappableBridge {
-    IOFTCore public oft;
-    INativeOFT public nativeOft;
-    IUniswapV2Router02 public uniswapRouter;
+    IOFTCore public immutable oft;
+    INativeOFT public immutable nativeOft;
+    IUniswapV2Router02 public immutable uniswapRouter;
 
     constructor(address _oft, address _nativeOft, address _uniswapRouter) {
         require(_oft != address(0), "SwappableBridge: invalid OFT address");
@@ -20,7 +20,8 @@ contract SwappableBridge {
         uniswapRouter = IUniswapV2Router02(_uniswapRouter);
     }
 
-    function swapAndBridge(uint amountIn, uint amountOutMin, uint16 dstChainId, address payable refundAddress, address zroPaymentAddress, bytes calldata adapterParams) external payable {
+    function swapAndBridge(uint amountIn, uint amountOutMin, uint16 dstChainId, address to, address payable refundAddress, address zroPaymentAddress, bytes calldata adapterParams) external payable {
+        require(to != address(0), "SwappableBridge: invalid to address");
         require(msg.value > amountIn, "SwappableBridge: not enough value sent");
 
         address[] memory path = new address[](2);
@@ -28,13 +29,14 @@ contract SwappableBridge {
         path[1] = address(oft);
 
         uint[] memory amounts = uniswapRouter.swapExactETHForTokens{value: amountIn}(amountOutMin, path, address(this), block.timestamp);
-        oft.sendFrom{value: msg.value - amountIn}(address(this), dstChainId, abi.encodePacked(msg.sender), amounts[1], refundAddress, zroPaymentAddress, adapterParams);
+        oft.sendFrom{value: msg.value - amountIn}(address(this), dstChainId, abi.encodePacked(to), amounts[1], refundAddress, zroPaymentAddress, adapterParams);
     }
 
-    function bridge(uint amountIn, uint16 dstChainId, address payable refundAddress, address zroPaymentAddress, bytes calldata adapterParams) external payable {
+    function bridge(uint amountIn, uint16 dstChainId, address to, address payable refundAddress, address zroPaymentAddress, bytes calldata adapterParams) external payable {
+        require(to != address(0), "SwappableBridge: invalid to address");
         require(msg.value > amountIn, "SwappableBridge: not enough value sent");
 
         nativeOft.deposit{value: amountIn}();
-        nativeOft.sendFrom{value: msg.value - amountIn}(address(this), dstChainId, abi.encodePacked(msg.sender), amountIn, refundAddress, zroPaymentAddress, adapterParams);
+        nativeOft.sendFrom{value: msg.value - amountIn}(address(this), dstChainId, abi.encodePacked(to), amountIn, refundAddress, zroPaymentAddress, adapterParams);
     }
 }

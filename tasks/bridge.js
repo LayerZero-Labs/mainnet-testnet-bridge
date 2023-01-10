@@ -13,7 +13,7 @@ module.exports = async function (taskArgs, hre) {
     const increasedNativeFee = nativeFee.mul(5).div(4) // 20% increase
 
     let tx = await (
-        await bridge.bridge(amount, dstChainId, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee) })
+        await bridge.bridge(amount, dstChainId, owner.address, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee) })
     ).wait()
     console.log(`bridge tx: ${tx.transactionHash}\n`)
 }

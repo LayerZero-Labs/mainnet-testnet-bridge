@@ -12,6 +12,6 @@ module.exports = async function (taskArgs, hre) {
     const nativeFee = (await oft.estimateSendFee(dstChainId, owner.address, amount, false, "0x")).nativeFee
     const increasedNativeFee = nativeFee.mul(5).div(4) // 20% increase
 
-    let tx = (await bridge.swapAndBridge(amount, "0", dstChainId, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee) })).wait()
+    let tx = (await bridge.swapAndBridge(amount, "0", dstChainId, owner.address, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee) })).wait()
     console.log(tx.transactionHash)
 }

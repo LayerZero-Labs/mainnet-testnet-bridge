@@ -59,7 +59,7 @@ describe("SwappableBridge", function () {
         const goerliAmount = utils.parseEther("10")
         beforeEach(async () => {
             const nativeFee = (await goerliEthNativeOFT.estimateSendFee(mainnetId, owner.address, goerliAmount, false, "0x")).nativeFee
-            await goerliEthBridge.bridge(goerliAmount, mainnetId, owner.address, constants.AddressZero, "0x", {
+            await goerliEthBridge.bridge(goerliAmount, mainnetId, owner.address, owner.address, constants.AddressZero, "0x", {
                 value: goerliAmount.add(nativeFee),
             })
         })
@@ -89,7 +89,7 @@ describe("SwappableBridge", function () {
                     const amounts = await ethUniswap.router.getAmountsOut(amountIn, [weth.address, goerliEthOFT.address])
                     amountOutMin = amounts[1]
                     const nativeFee = (await ethOFT.estimateSendFee(goerliEthId, ownerAddressBytes32, amountOutMin, false, "0x")).nativeFee
-                    await ethBridge.swapAndBridge(amountIn, amountOutMin, goerliEthId, owner.address, constants.AddressZero, "0x", { value: nativeFee.add(amountIn) })
+                    await ethBridge.swapAndBridge(amountIn, amountOutMin, goerliEthId, owner.address, owner.address, constants.AddressZero, "0x", { value: nativeFee.add(amountIn) })
                 })
 
                 it("pool balances changed", async () => {
@@ -104,7 +104,7 @@ describe("SwappableBridge", function () {
         const ethAmount = utils.parseEther("10")
         beforeEach(async () => {
             const nativeFee = (await ethNativeOFT.estimateSendFee(goerliEthId, ownerAddressBytes32, ethAmount, false, "0x")).nativeFee
-            await ethBridge.bridge(ethAmount, goerliEthId, owner.address, constants.AddressZero, "0x", { value: ethAmount.add(nativeFee) })
+            await ethBridge.bridge(ethAmount, goerliEthId, owner.address, owner.address, constants.AddressZero, "0x", { value: ethAmount.add(nativeFee) })
         })
 
         it("EthOFT is on Goerli", async () => {
@@ -132,7 +132,7 @@ describe("SwappableBridge", function () {
                     const amounts = await goerliEthUniswap.router.getAmountsOut(amountIn, [goerliWeth.address, ethOFT.address])
                     amountOutMin = amounts[1]
                     const nativeFee = (await ethOFT.estimateSendFee(mainnetId, ownerAddressBytes32, amountOutMin, false, "0x")).nativeFee
-                    await goerliEthBridge.swapAndBridge(amountIn, amountOutMin, mainnetId, owner.address, constants.AddressZero, "0x", { value: nativeFee.add(amountIn) })
+                    await goerliEthBridge.swapAndBridge(amountIn, amountOutMin, mainnetId, owner.address, owner.address, constants.AddressZero, "0x", { value: nativeFee.add(amountIn) })
                 })
 
                 it("pool balances changed", async () => {
