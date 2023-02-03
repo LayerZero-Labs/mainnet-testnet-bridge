@@ -21,9 +21,11 @@ module.exports = async function (taskArgs, hre) {
     console.log(`[${remoteChain}] OFT Address: ${remoteOft}`)
     console.log(`[${remoteChain}] Native OFT Address: ${remoteNativeOft}`)
 
-    let tx = await (await nativeOft.setTrustedRemoteAddress(remoteChainId, remoteOft)).wait()
-    console.log(`native OFT setTrustedRemoteAddress tx: ${tx.transactionHash}`)
+    let tx = await nativeOft.setTrustedRemoteAddress(remoteChainId, remoteOft)
+    console.log(`native OFT setTrustedRemoteAddress tx: ${tx.hash}`)
+    await tx.wait()
 
-    tx = await (await oft.setTrustedRemoteAddress(remoteChainId, remoteNativeOft)).wait()
-    console.log(`OFT setTrustedRemoteAddress tx: ${tx.transactionHash}`)
+    tx = await oft.setTrustedRemoteAddress(remoteChainId, remoteNativeOft)
+    console.log(`OFT setTrustedRemoteAddress tx: ${tx.hash}`)
+    await tx.wait()
 }

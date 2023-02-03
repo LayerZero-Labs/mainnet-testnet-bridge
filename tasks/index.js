@@ -13,4 +13,6 @@ task("swapAndBridge", "swaps and bridge", require("./swapAndBridge"))
     .addParam("targetNetwork", "the destination chainId")
     .addParam("amount", "amount to swap")
 
+task("getPrice", "info", require("./getPrice"))
+
 task("info", "info", require("./info"))

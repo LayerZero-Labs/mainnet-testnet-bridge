@@ -22,7 +22,7 @@ contract SwappableBridge {
 
     function swapAndBridge(uint amountIn, uint amountOutMin, uint16 dstChainId, address to, address payable refundAddress, address zroPaymentAddress, bytes calldata adapterParams) external payable {
         require(to != address(0), "SwappableBridge: invalid to address");
-        require(msg.value > amountIn, "SwappableBridge: not enough value sent");
+        require(msg.value >= amountIn, "SwappableBridge: not enough value sent");
 
         address[] memory path = new address[](2);
         path[0] = uniswapRouter.WETH();
@@ -34,7 +34,7 @@ contract SwappableBridge {
 
     function bridge(uint amountIn, uint16 dstChainId, address to, address payable refundAddress, address zroPaymentAddress, bytes calldata adapterParams) external payable {
         require(to != address(0), "SwappableBridge: invalid to address");
-        require(msg.value > amountIn, "SwappableBridge: not enough value sent");
+        require(msg.value >= amountIn, "SwappableBridge: not enough value sent");
 
         nativeOft.deposit{value: amountIn}();
         nativeOft.sendFrom{value: msg.value - amountIn}(address(this), dstChainId, abi.encodePacked(to), amountIn, refundAddress, zroPaymentAddress, adapterParams);

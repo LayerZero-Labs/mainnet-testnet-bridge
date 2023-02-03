@@ -13,7 +13,7 @@ describe("SwappableBridge", function () {
     let goerliEthUniswap, goerliEthNativeOFT, goerliEthOFT, goerliWeth, goerliEthBridge, goerliEthPool
 
     before(async () => {
-        ;[owner] = await ethers.getSigners()
+        [owner] = await ethers.getSigners()
         ownerAddressBytes32 = ethers.utils.defaultAbiCoder.encode(["address"], [owner.address])
         const wethFactory = await ethers.getContractFactory("WETH9")
         weth = await wethFactory.deploy()

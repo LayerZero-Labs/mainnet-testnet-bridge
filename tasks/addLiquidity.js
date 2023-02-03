@@ -12,13 +12,18 @@ module.exports = async function (taskArgs, hre) {
     let oftAmount = ethers.utils.parseEther(taskArgs.tokenAmount)
     let ethAmount = ethers.utils.parseEther(taskArgs.ethAmount)
 
-    let tx = await (await oft.approve(uniswapRouter.address, oftAmount)).wait()
-    console.log(`Approve tx: ${tx.transactionHash}`)
+    const gasPrice = await hre.ethers.provider.getGasPrice()
+    const finalGasPrice = gasPrice.mul(5).div(4)
+
+    let tx = await oft.approve(uniswapRouter.address, oftAmount, { gasPrice: finalGasPrice })
+    console.log(`Approve tx: ${tx.hash}`)
+    await tx.wait()
 
     const blockNumber = await ethers.provider.getBlockNumber()
     const block = await ethers.provider.getBlock(blockNumber)
     const deadline = block.timestamp + 5 * 60 // 5 minutes from the current time
 
-    tx = (await uniswapRouter.addLiquidityETH(oft.address, oftAmount, oftAmount, ethAmount, owner.address, deadline, { value: ethAmount })).wait()
-    console.log(`Add liquidity tx: ${tx.transactionHash}`)
+    tx = await uniswapRouter.addLiquidityETH(oft.address, oftAmount, oftAmount, ethAmount, owner.address, deadline, { value: ethAmount, gasPrice: finalGasPrice })
+    console.log(`Add liquidity tx: ${tx.hash}`)
+    await tx.wait()
 }

@@ -12,6 +12,10 @@ module.exports = async function (taskArgs, hre) {
     const nativeFee = (await oft.estimateSendFee(dstChainId, owner.address, amount, false, "0x")).nativeFee
     const increasedNativeFee = nativeFee.mul(5).div(4) // 20% increase
 
-    let tx = (await bridge.swapAndBridge(amount, "0", dstChainId, owner.address, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee) })).wait()
-    console.log(tx.transactionHash)
+    const gasPrice = await hre.ethers.provider.getGasPrice()
+    const finalGasPrice = gasPrice.mul(5).div(4)
+
+    let tx = await bridge.swapAndBridge(amount, "0", dstChainId, owner.address, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee), gasPrice: finalGasPrice })
+    console.log(`swapAndBridge tx ${tx.hash}`)
+    await tx.wait()
 }

@@ -1,15 +1,15 @@
 {
-	"goerli": {
-		"name": "Native OFT",
-		"symbol": "NOFT",
-		"minAmount": "0.001",
-		"useMinAmount": true,
-		"contractName": "MinSendAmountNativeOFT"
-	},
-	"bsc-testnet": {
-		"name": "Native OFT",
-		"symbol": "NOFT",
+	"ethereum": {
+		"name": "Native ETH",
+		"symbol": "ETH",
 		"useMinAmount": false,
 		"contractName": "NativeOFT"
+	},
+	"goerli-mainnet": {
+		"name": "Native Goerli ETH",
+		"symbol": "GETH",
+		"minAmount": "1",
+		"useMinAmount": true,
+		"contractName": "MinSendAmountNativeOFT"
 	}
 }
