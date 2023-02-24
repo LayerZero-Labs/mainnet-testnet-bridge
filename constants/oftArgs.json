@@ -5,6 +5,18 @@
 		"useMinAmount": false,
 		"contractName": "OFT"
 	},
+	"arbitrum": {
+		"name": "Goerli ETH",
+		"symbol": "GETH",
+		"useMinAmount": false,
+		"contractName": "OFT"
+	},
+	"optimism": {
+		"name": "Goerli ETH",
+		"symbol": "GETH",
+		"useMinAmount": false,
+		"contractName": "OFT"
+	},
 	"goerli-mainnet": {
 		"name": "Mainnet ETH",
 		"symbol": "METH",

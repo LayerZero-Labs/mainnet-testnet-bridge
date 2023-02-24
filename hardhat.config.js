@@ -77,7 +77,17 @@ module.exports = {
       url: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
       chainId: 1,
       accounts: accounts(),
-    }, 
+    },
+    arbitrum: {
+      url: "https://arb1.arbitrum.io/rpc",
+      chainId: 42161,
+      accounts: accounts(),
+    },
+    optimism: {
+      url: "https://mainnet.optimism.io",
+      chainId: 10,
+      accounts: accounts(),
+    },
 
     "goerli-mainnet": {
       url: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
