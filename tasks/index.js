@@ -16,3 +16,6 @@ task("swapAndBridge", "swaps and bridge", require("./swapAndBridge"))
 task("getPrice", "info", require("./getPrice"))
 
 task("info", "info", require("./info"))
+
+task("getSigners", "show the signers of the current mnemonic", require("./getSigners"))
+    .addOptionalParam("n", "how many to show", 3, types.int)
