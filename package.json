@@ -17,22 +17,24 @@
   },
   "dependencies": {
     "@layerzerolabs/solidity-examples": "0.0.6",
+    "@openzeppelin/contracts": "^4.4.1",
     "@uniswap/v2-periphery": "1.1.0-beta.0",
-    "@openzeppelin/contracts": "^4.4.1"
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.3"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-waffle": "2.0.3",
-    "@nomiclabs/hardhat-etherscan": "^3.1.0",
     "@ethersproject/hardware-wallets": "^5.0.14",
     "@layerzerolabs/prettier-plugin-solidity": "^1.0.0-beta.19",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomiclabs/hardhat-ethers": "^2.0.3",
-    "ethereum-waffle": "^3.2.0",
+    "@nomiclabs/hardhat-etherscan": "^3.1.0",
+    "@nomiclabs/hardhat-waffle": "2.0.3",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.1",
+    "ethereum-waffle": "^3.2.0",
     "ethers": "^5.5.2",
     "hardhat": "^2.12.2",
     "hardhat-contract-sizer": "^2.1.1",
