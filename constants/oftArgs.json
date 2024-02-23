@@ -23,5 +23,11 @@
 		"minAmount": "0.0001",
 		"useMinAmount": true,
 		"contractName": "MinSendAmountOFT"
+	},
+	"fuse": {
+		"name": "Goerli ETH",
+		"symbol": "GETH",
+		"useMinAmount": false,
+		"contractName": "OFT"
 	}	
 }
