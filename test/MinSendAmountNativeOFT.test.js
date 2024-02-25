@@ -18,7 +18,7 @@ describe("MinSendAmountNativeOFT", () => {
     let localNativeOft, remoteOft
 
     before(async () => {
-        [owner, user] = await ethers.getSigners()
+        ;[owner, user] = await ethers.getSigners()
         ownerAddressBytes32 = utils.solidityPack(["address"], [owner.address])
     })
 
@@ -45,7 +45,16 @@ describe("MinSendAmountNativeOFT", () => {
 
     it("reverts when the amount sent is less than minimum allowed", async () => {
         await expect(
-            localNativeOft.sendFrom(owner.address, remoteChainId, ownerAddressBytes32, utils.parseEther("0.9"), owner.address, constants.AddressZero, "0x", { value: nativeFee })
+            localNativeOft.sendFrom(
+                owner.address,
+                remoteChainId,
+                ownerAddressBytes32,
+                utils.parseEther("0.9"),
+                owner.address,
+                constants.AddressZero,
+                "0x",
+                { value: nativeFee }
+            )
         ).to.be.revertedWith("MinSendAmountNativeOFT: amount is less than minimum")
     })
 

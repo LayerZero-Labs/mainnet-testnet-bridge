@@ -23,7 +23,10 @@ module.exports = async function (taskArgs, hre) {
     const block = await ethers.provider.getBlock(blockNumber)
     const deadline = block.timestamp + 5 * 60 // 5 minutes from the current time
 
-    tx = await uniswapRouter.addLiquidityETH(oft.address, oftAmount, oftAmount, ethAmount, owner.address, deadline, { value: ethAmount, gasPrice: finalGasPrice })
+    tx = await uniswapRouter.addLiquidityETH(oft.address, oftAmount, oftAmount, ethAmount, owner.address, deadline, {
+        value: ethAmount,
+        gasPrice: finalGasPrice,
+    })
     console.log(`Add liquidity tx: ${tx.hash}`)
     await tx.wait()
 }

@@ -6,11 +6,11 @@ import "@layerzerolabs/solidity-examples/contracts/token/oft/IOFTCore.sol";
 import "./IWETH.sol";
 import "./INativeOFT.sol";
 
-contract SwappableBridgeUniswapV3 {    
+contract SwappableBridgeUniswapV3 {
     uint24 public constant poolFee = 3000; // 0.3%
 
     IWETH public immutable weth;
-	IOFTCore public immutable oft;
+    IOFTCore public immutable oft;
     ISwapRouter public immutable swapRouter;
 
     constructor(address _weth, address _oft, address _swapRouter) {
@@ -30,17 +30,7 @@ contract SwappableBridgeUniswapV3 {
         weth.deposit{value: amountIn}();
         weth.approve(address(swapRouter), amountIn);
 
-        ISwapRouter.ExactInputSingleParams memory params =
-            ISwapRouter.ExactInputSingleParams({
-                tokenIn: address(weth),
-                tokenOut: address(oft),
-                fee: poolFee,
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: amountIn,
-                amountOutMinimum: amountOutMin,
-                sqrtPriceLimitX96: 0
-            });
+        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({tokenIn: address(weth), tokenOut: address(oft), fee: poolFee, recipient: address(this), deadline: block.timestamp, amountIn: amountIn, amountOutMinimum: amountOutMin, sqrtPriceLimitX96: 0});
 
         uint amountOut = swapRouter.exactInputSingle(params);
         oft.sendFrom{value: msg.value - amountIn}(address(this), dstChainId, abi.encodePacked(to), amountOut, refundAddress, zroPaymentAddress, adapterParams);

@@ -18,7 +18,7 @@ describe("MinSendAmountOFT", () => {
     let localOft, remoteOft
 
     before(async () => {
-        [owner, user] = await ethers.getSigners()
+        ;[owner, user] = await ethers.getSigners()
         ownerAddressBytes32 = utils.solidityPack(["address"], [owner.address])
     })
 
@@ -60,7 +60,9 @@ describe("MinSendAmountOFT", () => {
 
     it("sends the amount greater or equal to the minimum allowed", async () => {
         const sendAmount = minAmount
-        await localOft.sendFrom(owner.address, remoteChainId, ownerAddressBytes32, sendAmount, owner.address, constants.AddressZero, "0x", { value: nativeFee })
+        await localOft.sendFrom(owner.address, remoteChainId, ownerAddressBytes32, sendAmount, owner.address, constants.AddressZero, "0x", {
+            value: nativeFee,
+        })
         expect(await localOft.balanceOf(owner.address)).to.eq(initialSupply.sub(sendAmount))
         expect(await remoteOft.balanceOf(owner.address)).to.eq(sendAmount)
     })

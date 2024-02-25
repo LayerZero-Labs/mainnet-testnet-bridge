@@ -1,5 +1,7 @@
-task("setTrustedRemote", "sets trusted remotes for OFT and NativeOFT", require("./setTrustedRemote"))
-    .addParam("targetNetwork", "the destination chainId")
+task("setTrustedRemote", "sets trusted remotes for OFT and NativeOFT", require("./setTrustedRemote")).addParam(
+    "targetNetwork",
+    "the destination chainId"
+)
 
 task("bridge", "bridges native tokens", require("./bridge"))
     .addParam("targetNetwork", "the destination chainId")
@@ -17,5 +19,4 @@ task("getPrice", "info", require("./getPrice"))
 
 task("info", "info", require("./info"))
 
-task("getSigners", "show the signers of the current mnemonic", require("./getSigners"))
-    .addOptionalParam("n", "how many to show", 3, types.int)
+task("getSigners", "show the signers of the current mnemonic", require("./getSigners")).addOptionalParam("n", "how many to show", 3, types.int)
