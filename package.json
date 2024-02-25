@@ -13,7 +13,8 @@
     "test": "hardhat test",
     "coverage": "hardhat coverage",
     "prettier": "prettier --write test/**/*.js && prettier --write deploy/*.js && prettier --write tasks/*.js && prettier --write contracts/**/*.sol && prettier --write contracts/**/**/*.sol && prettier --write contracts/**/**/**/*.sol",
-    "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol' && solhint 'contracts/**/**/*.sol' && solhint 'contracts/**/**/**/*.sol'"
+    "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol' && solhint 'contracts/**/**/*.sol' && solhint 'contracts/**/**/**/*.sol'",
+    "prepare": "husky"
   },
   "husky": {
     "hooks": {
@@ -22,7 +23,6 @@
   },
   "lint-staged": {
     "*.{js,sol}": [
-      "echo \"hi\"",
       "yarn lint --fix"
     ]
   },
