@@ -13,6 +13,6 @@ module.exports = async function (taskArgs, hre) {
     console.log(`OFT owner balance: ${ethers.utils.formatEther(await oft.balanceOf(owner.address))}`)
     console.log(`ETH owner balance: ${ethers.utils.formatEther(await ethers.provider.getBalance(owner.address))}`)
 
-    console.log(`OFT pool balance:  ${ethers.utils.formatEther(await oft.balanceOf(poolAddress))}`);
-    console.log(`ETH pool balance:  ${ethers.utils.formatEther(await weth.balanceOf(poolAddress))}`);
+    console.log(`OFT pool balance:  ${ethers.utils.formatEther(await oft.balanceOf(poolAddress))}`)
+    console.log(`ETH pool balance:  ${ethers.utils.formatEther(await weth.balanceOf(poolAddress))}`)
 }

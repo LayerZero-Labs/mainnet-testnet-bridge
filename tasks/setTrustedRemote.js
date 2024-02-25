@@ -4,8 +4,8 @@ const OFT_ARGS = require("../constants/oftArgs.json")
 const NATIVE_OFT_ARGS = require("../constants/nativeOftArgs.json")
 
 module.exports = async function (taskArgs, hre) {
-    const localChain = hre.network.name;
-    const remoteChain = taskArgs.targetNetwork;
+    const localChain = hre.network.name
+    const remoteChain = taskArgs.targetNetwork
 
     const remoteChainId = CHAIN_IDS[remoteChain]
 

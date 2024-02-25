@@ -9,8 +9,8 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
     const lzEndpointAddress = LZ_ENDPOINTS[hre.network.name]
     console.log(`[${hre.network.name}] Endpoint Address: ${lzEndpointAddress}`)
     const oftArgs = OFT_ARGS[hre.network.name]
-    const constructorArgs = oftArgs.useMinAmount 
-        ? [oftArgs.name, oftArgs.symbol, lzEndpointAddress, ethers.utils.parseEther(oftArgs.minAmount)] 
+    const constructorArgs = oftArgs.useMinAmount
+        ? [oftArgs.name, oftArgs.symbol, lzEndpointAddress, ethers.utils.parseEther(oftArgs.minAmount)]
         : [oftArgs.name, oftArgs.symbol, lzEndpointAddress]
 
     await deploy(oftArgs.contractName, {

@@ -15,7 +15,10 @@ module.exports = async function (taskArgs, hre) {
     const gasPrice = await hre.ethers.provider.getGasPrice()
     const finalGasPrice = gasPrice.mul(5).div(4)
 
-    let tx = await bridge.swapAndBridge(amount, "0", dstChainId, owner.address, owner.address, ethers.constants.AddressZero, "0x", { value: amount.add(increasedNativeFee), gasPrice: finalGasPrice })
+    let tx = await bridge.swapAndBridge(amount, "0", dstChainId, owner.address, owner.address, ethers.constants.AddressZero, "0x", {
+        value: amount.add(increasedNativeFee),
+        gasPrice: finalGasPrice,
+    })
     console.log(`swapAndBridge tx ${tx.hash}`)
     await tx.wait()
 }

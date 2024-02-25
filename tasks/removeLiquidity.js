@@ -13,7 +13,7 @@ module.exports = async function (taskArgs, hre) {
 
     const blockNumber = await ethers.provider.getBlockNumber()
     const block = await ethers.provider.getBlock(blockNumber)
-    const deadline = block.timestamp + 5 * 60; // 5 minutes from the current time
+    const deadline = block.timestamp + 5 * 60 // 5 minutes from the current time
     const gasPrice = await hre.ethers.provider.getGasPrice()
     const finalGasPrice = gasPrice.mul(5).div(4)
 

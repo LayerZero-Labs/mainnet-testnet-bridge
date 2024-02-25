@@ -13,7 +13,18 @@
     "test": "hardhat test",
     "coverage": "hardhat coverage",
     "prettier": "prettier --write test/**/*.js && prettier --write deploy/*.js && prettier --write tasks/*.js && prettier --write contracts/**/*.sol && prettier --write contracts/**/**/*.sol && prettier --write contracts/**/**/**/*.sol",
-    "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol' && solhint 'contracts/**/**/*.sol' && solhint 'contracts/**/**/**/*.sol'"
+    "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol' && solhint 'contracts/**/**/*.sol' && solhint 'contracts/**/**/**/*.sol'",
+    "prepare": "husky"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,sol}": [
+      "yarn lint --fix"
+    ]
   },
   "dependencies": {
     "@layerzerolabs/solidity-examples": "0.0.6",
@@ -41,6 +52,8 @@
     "hardhat-deploy": "^0.10.5",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.6",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "prettier": "^2.4.1",
     "solhint": "^3.3.6",
     "solidity-coverage": "^0.8.2",
