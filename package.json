@@ -19,9 +19,7 @@
     "@layerzerolabs/solidity-examples": "0.0.6",
     "@openzeppelin/contracts": "^4.4.1",
     "@uniswap/universal-router": "^1.6.0",
-    "@uniswap/v2-periphery": "1.1.0-beta.0",
-    "@uniswap/v3-core": "^1.0.1",
-    "@uniswap/v3-periphery": "^1.4.3"
+    "@uniswap/v2-periphery": "1.1.0-beta.0"
   },
   "devDependencies": {
     "@ethersproject/hardware-wallets": "^5.0.14",
