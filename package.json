@@ -18,6 +18,7 @@
   "dependencies": {
     "@layerzerolabs/solidity-examples": "0.0.6",
     "@openzeppelin/contracts": "^4.4.1",
+    "@uniswap/universal-router": "^1.6.0",
     "@uniswap/v2-periphery": "1.1.0-beta.0",
     "@uniswap/v3-core": "^1.0.1",
     "@uniswap/v3-periphery": "^1.4.3"
@@ -44,6 +45,7 @@
     "prettier": "^2.4.1",
     "solhint": "^3.3.6",
     "solidity-coverage": "^0.8.2",
+    "solmate": "^6.2.0",
     "typescript": "^3.7.0"
   }
 }
