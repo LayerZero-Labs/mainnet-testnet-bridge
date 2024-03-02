@@ -23,5 +23,12 @@
 		"minAmount": "0.0001",
 		"useMinAmount": true,
 		"contractName": "MinSendAmountOFT"
-	}	
+	},
+	"sepolia-mainnet": {
+		"name": "Mainnet ETH",
+		"symbol": "METH",
+		"minAmount": "0.0001",
+		"useMinAmount": true,
+		"contractName": "MinSendAmountOFT"
+	}
 }
