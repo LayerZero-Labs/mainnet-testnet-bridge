@@ -1,4 +1,4 @@
-const CHAIN_IDS = require("../constants/chainIds.json")
+const CHAIN_IDS = require("../constants/endpointIds.json")
 const NATIVE_OFT_ARGS = require("../constants/nativeOftArgs.json")
 
 module.exports = async function (taskArgs, hre) {
